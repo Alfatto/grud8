@@ -1,23 +1,23 @@
 package com.alfat.mvc;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.List;
 
 public class Test {
     public static void main(String[] args) {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("default");
 
-        SessionFactory sessionFactory = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Employee.class)
-                .buildSessionFactory();
-
-        Session session = sessionFactory.getCurrentSession();
         Employee employee = new Employee("Petroliy", "Alfat");
-        session.beginTransaction();
-        session.save(employee);
-        session.getTransaction().commit();
 
-        sessionFactory.close();
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        List list = entityManager.createQuery("select e from Employee e").getResultList();
+
+        System.out.println(list.size());
     }
 }
